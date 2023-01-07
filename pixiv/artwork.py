@@ -29,6 +29,7 @@ class PixivArtwork:
         "width",
         "height",
         "pages_count",
+        "image_urls",
     )
     if TYPE_CHECKING:
         id: int
@@ -40,6 +41,7 @@ class PixivArtwork:
         width: int
         height: int
         pages_count: int
+        image_urls: Dict[str, str]
 
     def __init__(self, data: Dict[str, Any]) -> None:
         self.id = int(data["id"])
@@ -57,10 +59,19 @@ class PixivArtwork:
         self.width = data["width"]
         self.height = data["height"]
         self.pages_count = data["pageCount"]
+        self.image_urls = data["urls"]
 
     @property
     def url(self) -> str:
         return f"https://www.pixiv.net/en/artworks/{self.id}"
+
+    async def get_image_url(self) -> str:
+        url = self.image_urls["regular"]
+        if url is not None:
+            return url
+
+        print(f"Cannot fetch image URL for artwork {self.id}, please enter it manually.")
+        return await asyncio.to_thread(input, "image URL>")
 
     def create_embed(self, *, attachment_name: str = "image.png") -> discord.Embed:
         embed = discord.Embed(

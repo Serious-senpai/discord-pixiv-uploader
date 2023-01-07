@@ -72,7 +72,7 @@ async def main() -> None:
                             print("Cannot find such artwork!")
 
                         else:
-                            image_url = await asyncio.to_thread(input, "image URL>")
+                            image_url = await artwork.get_image_url()
                             try:
                                 async with session.get(image_url, headers={"referer": "https://www.pixiv.net/"}) as response:
                                     response.raise_for_status()
