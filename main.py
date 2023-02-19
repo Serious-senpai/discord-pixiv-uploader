@@ -20,9 +20,7 @@ except KeyError:
 
 async def main() -> None:
     current_channel = None
-    async with aiohttp.ClientSession(
-        headers={"accept-language": "en-US,en;q=0.9"},
-    ) as session:
+    async with aiohttp.ClientSession(headers={"accept-language": "en-US,en;q=0.9"}) as session:
         while True:
             text_cmd = await asyncio.to_thread(input, "command>")
             try:
@@ -110,11 +108,13 @@ async def main() -> None:
                                     "Authorization": f"Bot {TOKEN}",
                                 }
 
-                                await session.post(
+                                async with session.post(
                                     f"https://discord.com/api/v10/channels/{current_channel}/messages",
                                     data=form_data,
                                     headers=headers,
-                                )
+                                ) as response:
+                                    print(f"HTTP status {response.status}")
+
                 else:
                     print(f"Unknown command: {command}")
 
